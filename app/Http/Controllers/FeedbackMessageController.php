@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\FeedbackSendRequest;
 
 class FeedbackMessageController extends Controller
 {
     public function index()
     {
-        return response()->view('feedback');
+        return view('feedback');
     }
 
-    public function send()
+    public function send(FeedbackSendRequest $request)
     {
-
+       return response()->json(['message' => 'Сообщение принято к отправке']);
     }
 }
