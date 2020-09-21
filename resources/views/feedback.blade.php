@@ -5,6 +5,29 @@
 @section('head')
     <script src="{{ asset('js/sendForm.js') }}"></script>
     @include('includes.recaptcha')
+
+    <style>
+        .form__input, .form__button {
+            width: 100%;
+        }
+        .form__notify {
+            width: 100%;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .form__input_invalid {
+            border: 1px solid #fe4444;
+        }
+        .form__error-message {
+            display: inline-block;
+            font-size: 12px;
+            color: #fe4444;
+            margin: 3px 0;
+        }
+        .form__button {
+            margin: 20px 0;
+        }
+    </style>
 @endsection
 
 @section('content')

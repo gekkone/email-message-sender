@@ -7,6 +7,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
+  <style>
+    main {
+        width: 400px;
+        margin: auto;
+    }
+  </style>
+
   @yield('head')
 
   <title>@yield('title')</title>
