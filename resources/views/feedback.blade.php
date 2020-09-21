@@ -8,13 +8,11 @@
 @endsection
 
 @section('content')
-
-    <div class="notify"></div>
-
-    <form action="/feedback/send" method="POST">
-        <textarea name="content"></textarea>
+    <form class="form form-feedback" action="/feedback/send" method="POST">
+        <div class="form__notify"></div>
+        <textarea class="form__input" name="content"></textarea>
         {{ csrf_field() }}
         <br>
-        <input type="submit" value="Отправить">
+        <input class="form__button" type="submit" value="Отправить">
     </form>
 @endsection

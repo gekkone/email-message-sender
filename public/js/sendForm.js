@@ -5,7 +5,7 @@ document.addEventListener('readystatechange', () => {
 
     let csrfToken = document.head.querySelector('meta[name="csrf-token"]').content;
 
-    let feedbackForm = document.querySelector('form');
+    let feedbackForm = document.querySelector('.form-feedback');
     if (feedbackForm) {
         feedbackForm.addEventListener('submit', feedbackFormHandler);
     }
@@ -13,14 +13,13 @@ document.addEventListener('readystatechange', () => {
     function feedbackFormHandler(e) {
         let form = e.target;
 
-        form.querySelectorAll('.input_invalid').forEach(field => {
-            field.classList.remove('input_invalid');
+        form.querySelectorAll('.form__input_invalid').forEach(field => {
+            field.classList.remove('form__input_invalid');
         });
 
-        form.querySelectorAll('.form_error-message').forEach(msg => {
+        form.querySelectorAll('.form__error-message').forEach(msg => {
             form.removeChild(msg);
         })
-
         sendForm(e)
             .then(jsonResponse => {
                 notify(jsonResponse.message, form);
@@ -37,10 +36,10 @@ document.addEventListener('readystatechange', () => {
                         let errorMsg = errors[fieldName];
 
                         if (field) {
-                            field.classList.add('input_invalid');
+                            field.classList.add('form__input_invalid');
 
                             error = document.createElement('span');
-                            error.classList.add('form_error-message');
+                            error.classList.add('form__error-message');
                             error.innerHTML = errorMsg;
                             form.insertBefore(error, field.nextSibling);
                         }
@@ -102,7 +101,7 @@ document.addEventListener('readystatechange', () => {
     }
 
     function notify(message, form) {
-        let notifyElm = form.querySelector('.notify');
+        let notifyElm = form.querySelector('.form__notify');
         notifyElm.innerHTML = message;
     }
 });
