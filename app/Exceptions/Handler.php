@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
 
 class Handler extends ExceptionHandler
 {
@@ -42,10 +43,21 @@ class Handler extends ExceptionHandler
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Exception  $exception
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response
      */
     public function render($request, Exception $exception)
     {
+        if ($exception instanceof ValidationException && $request->expectsJson()) {
+            if ($exception->response) {
+                return $exception->response;
+            }
+
+            return response()->json([
+                'message' => 'Переданы некорректные данные',
+                'errors' => $exception->validator->getMessageBag()
+            ], $exception->status);
+        }
+
         return parent::render($request, $exception);
     }
 }
