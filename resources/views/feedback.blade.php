@@ -4,6 +4,7 @@
 
 @section('head')
     <script src="{{ asset('js/sendForm.js') }}"></script>
+    @include('includes.recaptcha')
 @endsection
 
 @section('content')
