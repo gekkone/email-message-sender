@@ -7,13 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
+  @yield('head')
+
   <title>@yield('title')</title>
-
-  <!-- JavaScripts -->
-  @yield('scripts')
-
-  <!-- Styles -->
-  @yield('styles')
 </head>
 
 <body>

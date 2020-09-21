@@ -2,7 +2,7 @@
 
 @section('title', 'Отправка сообщения')
 
-@section('scripts')
+@section('head')
     <script src="{{ asset('js/sendForm.js') }}"></script>
 @endsection
 
