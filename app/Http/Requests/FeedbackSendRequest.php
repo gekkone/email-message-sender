@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class FeedbackSendRequest extends FormRequest
+class FeedbackSendRequest extends RecaptchaVerifyRequest
 {
     /**
      * Определяет авторизован ли пользователь для выполнения этого запроса
