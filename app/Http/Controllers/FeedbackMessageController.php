@@ -26,7 +26,7 @@ class FeedbackMessageController extends Controller
     public function send(FeedbackSendRequest $request)
     {
         try {
-            $message = new FeedbackMessage($request->toArray());
+            $message = new FeedbackMessage($request->validated());
             $message->save();
 
             return response()->json(['message' => 'Сообщение принято к отправке']);
