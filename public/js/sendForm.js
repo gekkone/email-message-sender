@@ -67,12 +67,13 @@ document.addEventListener('readystatechange', () => {
         let data = new FormData(form);
 
         if (typeof grecaptcha !== 'undefined') {
-            validateRecaptcha()
-                .then(token => data.append('recaptcha-token', token))
-                .catch(error => {
-                    console.error(error);
+            try {
+                data.append('g-recaptcha-response', await validateRecaptcha());
+            }
+            catch (error) {
+                console.error(error);
                     notify('Не удалось пройти анти-спам проверку', form);
-                });
+            }
         }
 
         return new Promise((resolve, reject) => {
