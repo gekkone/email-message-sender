@@ -19,7 +19,8 @@ class RecaptchaVerify
     public function handle(Request $request, Closure $next, float $passingScore = 0.5)
     {
         if (config('app.validate_recaptcha')) {
-            if ($this->getRecaptchaScore($request->input('g-recaptcha-response')) < $passingScore) {
+            $token = $request->input('g-recaptcha-response');
+            if (!is_string($token) || $this->recaptchaScore($token) < $passingScore) {
                 throw new RecaptchaVerifyException('Не пройдена анти-спам проверка');
             }
         }
@@ -27,7 +28,12 @@ class RecaptchaVerify
         return $next($request);
     }
 
-    private function getRecaptchaScore(string $token)
+    /**
+     * Возвращает оценку человечности пользователя
+     * @param string $token - клиентский токен recaptcha
+     * @return float оценка пользователя
+     */
+    private function recaptchaScore(string $token)
     {
         $secret = config('secrets.recaptcha.secret_key');
 
@@ -54,8 +60,7 @@ class RecaptchaVerify
 
         $jsonData = json_decode($result, true);
         if (is_array($jsonData) && ($jsonData['success'] ?? false)) {
-            Log::error($jsonData['score']);
-            return $jsonData['score'] ?? 0;
+            return (float)$jsonData['score'] ?? 0;
         } else {
             if (json_last_error() !== JSON_ERROR_NONE) {
                 Log::error("Не удалось привести ответ от Recaptch'a к json:\n"
