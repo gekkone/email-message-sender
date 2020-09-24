@@ -16,4 +16,14 @@ class FeedbackMessage extends Model
 
         $this->create_at = time();
     }
+
+    /**
+     * Возвращает последнее отправленное с переданного ip соощение
+     * @param string $ip - ip адрес клиента
+     * @return FeedbackMessage|null
+     */
+    public static function lastSendedMessage(string $ip)
+    {
+        return self::where('client_ip', $ip)->orderBy('create_at', 'desc')->first();
+    }
 }

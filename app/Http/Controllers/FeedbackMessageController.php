@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\FeedbackMessage;
 use App\Http\Requests\FeedbackSendRequest;
-use Illuminate\Support\Facades\Log;
+use App\Services\FeedbackMessageService;
 use Illuminate\View\View;
-use Exception;
 
 class FeedbackMessageController extends Controller
 {
@@ -25,15 +23,9 @@ class FeedbackMessageController extends Controller
      */
     public function send(FeedbackSendRequest $request)
     {
-        try {
-            $message = new FeedbackMessage($request->validated());
-            $message->save();
+        $feedbackService = resolve(FeedbackMessageService::class);
+        $feedbackService->handleRequest($request);
 
-            return response()->json(['message' => 'Сообщение принято к отправке']);
-        } catch (Exception $e) {
-            Log::error($e);
-
-            return response()->json(['message' => 'Возникла ошибка, сервис временно недоступен'], 500);
-        }
+        return response()->json(['message' => 'Сообщение принято к отправке']);
     }
 }
