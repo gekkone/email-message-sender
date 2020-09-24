@@ -68,11 +68,12 @@ document.addEventListener('readystatechange', () => {
 
         if (typeof grecaptcha !== 'undefined') {
             try {
-                data.append('g-recaptcha-response', await validateRecaptcha());
+                let token = await validateRecaptcha();
+                data.append('g-recaptcha-response', token);
             }
             catch (error) {
                 console.error(error);
-                    notify('Не удалось пройти анти-спам проверку', form);
+                return Promise.reject({ 'message': 'Не удалось пройти анти-спам проверку' });
             }
         }
 
@@ -92,11 +93,11 @@ document.addEventListener('readystatechange', () => {
                     .catch(error => {
                         console.error(response);
                         console.error(error);
-                        notify('Получен некорректный ответ от сервера', form);
+                        reject({ 'message': 'Получен некорректный ответ от сервера' });
                     });
             }).catch(error => {
-                console.log(error);
-                notify('Не удалось отправить запрос на сервер', form);
+                console.error(error);
+                reject({ 'message': 'Не удалось пройти анти-спам проверку' });
             });
         });
     }
