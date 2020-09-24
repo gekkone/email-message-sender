@@ -16,6 +16,8 @@ class CreateFeedbackMessagesTable extends Migration
         Schema::create('feedback_messages', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->text('content')->comment('Содержимое сообщения');
+            $table->timestamp('create_at')->comment('Время создание сообщения');
+            $table->string('client_ip')->comment('Ip адрес с которого было отправлено сообщение');
         });
     }
 
