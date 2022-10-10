@@ -13,38 +13,39 @@ document.addEventListener('readystatechange', () => {
     function feedbackFormHandler(e) {
         let form = e.target;
 
-        form.querySelectorAll('.form__input_invalid').forEach(field => {
-            field.classList.remove('form__input_invalid');
-        });
+        clearFailedField(form);
 
-        form.querySelectorAll('.form__error-message').forEach(msg => {
-            form.removeChild(msg);
-        })
+        if (!(new FormData(form)).get('content').trim().length) {
+            selectFailedField(form, 'content', 'Текст сообщения не может быть пустым');
+            e.preventDefault();
+            return;
+        }
+
         sendForm(e)
-            .then(jsonResponse => {
-                notify(jsonResponse.message, form);
+            .then(data => {
+                let message = data.json.message || 'Получен некорректный ответ от сервера';
+                let response = data.response;
 
-            })
-            .catch(jsonResponse => {
-                notify(jsonResponse.message || 'Получен некооректный ответ от сервера',  form);
+                if (response != null && response.headers.has('retry-after')) {
+                    let available = new Date();
+                    available.setSeconds(available.getSeconds()
+                        + Number.parseInt(response.headers.get('retry-after'))
+                    );
 
-                let errors = jsonResponse.errors || null;
+                    message += "<br>Повторите попытку после<br>" + available.toLocaleString();
+                }
+
+                notify(message, form);
+                let errors = data.json.errors || null;
 
                 if (errors instanceof Object) {
                     for (let fieldName in errors) {
-                        let field = form.querySelector(`*[name="${fieldName}"`);
-                        let errorMsg = errors[fieldName];
-
-                        if (field) {
-                            field.classList.add('form__input_invalid');
-
-                            error = document.createElement('span');
-                            error.classList.add('form__error-message');
-                            error.innerHTML = errorMsg;
-                            form.insertBefore(error, field.nextSibling);
-                        }
+                        selectFailedField(form, fieldName, errors[fieldName]);
                     }
                 }
+            })
+            .catch(errorMessage => {
+                notify(errorMessage, form);
             });
     }
 
@@ -53,7 +54,7 @@ document.addEventListener('readystatechange', () => {
             let recaptchaSiteKey = document.head.querySelector('meta[name="recaptcha-key"]').content;
 
             grecaptcha.ready(() => {
-                grecaptcha.execute(recaptchaSiteKey, { action: 'sendFeedbackMessage' })
+                grecaptcha.execute(recaptchaSiteKey, {action: 'sendFeedbackMessage'})
                     .then(token => resolve(token))
                     .catch(error => reject(error));
             });
@@ -70,10 +71,9 @@ document.addEventListener('readystatechange', () => {
             try {
                 let token = await validateRecaptcha();
                 data.append('g-recaptcha-response', token);
-            }
-            catch (error) {
+            } catch (error) {
                 console.error(error);
-                return Promise.reject({ 'message': 'Не удалось пройти анти-спам проверку' });
+                return Promise.reject('Не удалось пройти анти-спам проверку');
             }
         }
 
@@ -88,16 +88,16 @@ document.addEventListener('readystatechange', () => {
             }).then(response => {
                 response.json()
                     .then(jsonData => {
-                        response.ok ? resolve(jsonData) : reject(jsonData);
+                        resolve({json: jsonData, response: response})
                     })
                     .catch(error => {
                         console.error(response);
                         console.error(error);
-                        reject({ 'message': 'Получен некорректный ответ от сервера' });
+                        reject('Получен некорректный ответ от сервера');
                     });
             }).catch(error => {
                 console.error(error);
-                reject({ 'message': 'Не удалось пройти анти-спам проверку' });
+                reject( 'Не удалось пройти анти-спам проверку');
             });
         });
     }
@@ -105,5 +105,28 @@ document.addEventListener('readystatechange', () => {
     function notify(message, form) {
         let notifyElm = form.querySelector('.form__notify');
         notifyElm.innerHTML = message;
+    }
+
+    function selectFailedField(form, fieldName, errMsg) {
+        let field = form.querySelector(`*[name="${fieldName}"`);
+
+        if (field) {
+            field.classList.add('form__input_invalid');
+
+            let error = document.createElement('span');
+            error.classList.add('form__error-message');
+            error.innerHTML = errMsg;
+            form.insertBefore(error, field.nextSibling);
+        }
+    }
+
+    function clearFailedField(form) {
+        form.querySelectorAll('.form__input_invalid').forEach(field => {
+            field.classList.remove('form__input_invalid');
+        });
+
+        form.querySelectorAll('.form__error-message').forEach(msg => {
+            form.removeChild(msg);
+        });
     }
 });
