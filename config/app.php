@@ -14,8 +14,8 @@ return [
     |
     | Example: in default user can send one message per hour
     */
-    'send_message_attempts' => 5,
-    'send_message_attempts_interval' => 3,
+    'send_message_attempts' => 1,
+    'send_message_attempts_interval' => 60,
 
     /*
     |--------------------------------------------------------------------------
@@ -29,7 +29,7 @@ return [
     | at which the user is considered real, default - 0.5
     |
     */
-    'validate_recaptcha' => true,
+    'validate_recaptcha' => false,
     'recaptcha_passing_score' => 0.5,
 
     /*
