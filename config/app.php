@@ -2,7 +2,20 @@
 
 return [
 
+    /*
+    |--------------------------------------------------------------------------
+    | Validate Google Recaptcha
+    |--------------------------------------------------------------------------
+    |
+    | validate_recaptcha - use Google recaptcha
+    | for detection real users, default = false
+    |
+    | recaptcha_passing_score - threshold value
+    | at which the user is considered real, default - 0.5
+    |
+    */
     'validate_recaptcha' => true,
+    'recaptcha_passing_score' => 0.5,
 
     /*
     |--------------------------------------------------------------------------
