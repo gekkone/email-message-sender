@@ -1,6 +1,21 @@
 <?php
 
 return [
+    /*
+    |--------------------------------------------------------------------------
+    | Limited mail send
+    |--------------------------------------------------------------------------
+    |
+    | send_message_attempts - number of attempts available
+    | in the set time interval (send_message_attempts_interval) - default = 1
+    |
+    | send_message_attempts_interval - time interval in minutes
+    | after which the number of attempts is reset, default = 60
+    |
+    | Example: in default user can send one message per hour
+    */
+    'send_message_attempts' => 5,
+    'send_message_attempts_interval' => 3,
 
     /*
     |--------------------------------------------------------------------------

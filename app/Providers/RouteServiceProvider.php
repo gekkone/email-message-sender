@@ -6,6 +6,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
@@ -21,10 +22,8 @@ class RouteServiceProvider extends ServiceProvider
 
     /**
      * Define your route model bindings, pattern filters, and other route configuration.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->configureRateLimiting();
 
@@ -40,13 +39,26 @@ class RouteServiceProvider extends ServiceProvider
 
     /**
      * Configure the rate limiters for the application.
-     *
-     * @return void
      */
-    protected function configureRateLimiting()
+    protected function configureRateLimiting(): void
     {
         RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+            return Limit::perMinute(60)->by($request->ip());
+        });
+
+        RateLimiter::for('sendFeedback', function (Request $request) {
+            return Limit::perMinutes(
+                config('app.send_message_attempts_interval', 60),
+                config('app.send_message_attempts', 1)
+            )->by(
+                $request->ip()
+            )->response(function (Request $request, array $headers) {
+                $message = 'Исчерпан лимит отправки сообщений';
+
+                return $request->ajax()
+                    ? Response::json(['message' => $message], 429, $headers)
+                    : Response::make($message, 429, $headers);
+            });
         });
     }
 }

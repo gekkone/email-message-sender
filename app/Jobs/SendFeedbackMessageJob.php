@@ -15,24 +15,21 @@ class SendFeedbackMessageJob implements ShouldQueue
 
     /**
      * Отправляемое сообщение обратной связи
-     * @var FeedbackMessage
      */
-    private $feedbackMessage;
+    private FeedbackMessage $feedbackMessage;
 
     /**
-     * Создаёт новый экзепляр задачи
-     * @return void
+     * Создаёт новый экземпляр задачи
      */
-    public function __construct(FeedbackMessage $feedbackMeesage)
+    public function __construct(FeedbackMessage $feedbackMessage)
     {
-        $this->feedbackMessage = $feedbackMeesage;
+        $this->feedbackMessage = $feedbackMessage;
     }
 
     /**
      * Обрабатывает задачу
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         //TODO: Добавить обработку или хотя бы связать с фейковым сервисом
     }
