@@ -16,7 +16,8 @@ Cделать API на Laravel для отсылки сообщения на ф�
 * Сервис ставит в очередь задачи по отправке сообщений;
 
 ### Установка
-* composer install
+* composer update
 * copy env.example -> .env
-* artisan key:generate
-* artisan serve - поднять локальный сервер
+* php artisan key:generate
+* php artisan migrate
+* php artisan serve - поднять локальный сервер
